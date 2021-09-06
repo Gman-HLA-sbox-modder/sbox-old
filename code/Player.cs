@@ -30,7 +30,7 @@ partial class SandboxPlayer : Player
 
 	public override void Respawn()
 	{
-		SetModel( "models/citizen/citizen.vmdl" );
+		SetModel( "models/citizen/citizen_old.vmdl" );
 
 		Controller = new WalkController();
 		Animator = new StandardPlayerAnimator();
@@ -48,7 +48,7 @@ partial class SandboxPlayer : Player
 		EnableHideInFirstPerson = true;
 		EnableShadowInFirstPerson = true;
 
-		Dress();
+		//Dress();
 
 		Inventory.Add( new PhysGun(), true );
 		Inventory.Add( new GravGun() );
