@@ -53,16 +53,6 @@ partial class SandboxPlayer
 			jacket.SetParent( this, true );
 			jacket.EnableShadowInFirstPerson = true;
 			jacket.EnableHideInFirstPerson = true;
-
-			var propInfo = jacket.GetModel().GetPropData();
-			if ( propInfo.ParentBodyGroupName != null )
-			{
-				SetBodyGroup( propInfo.ParentBodyGroupName, propInfo.ParentBodyGroupValue );
-			}
-			else
-			{
-				SetBodyGroup( "Chest", 0 );
-			}
 		}
 
 		if ( true )

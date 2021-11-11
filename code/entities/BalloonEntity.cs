@@ -3,9 +3,6 @@
 [Library( "ent_balloon", Title = "Balloon", Spawnable = true )]
 public partial class BalloonEntity : Prop
 {
-	public PhysicsJoint AttachJoint;
-	public Particles AttachRope;
-
 	private static float GravityScale => -0.2f;
 
 	public override void Spawn()
@@ -15,22 +12,7 @@ public partial class BalloonEntity : Prop
 		SetModel( "models/citizen_props/balloonregular01.vmdl" );
 		SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
 		PhysicsBody.GravityScale = GravityScale;
-		RenderColor = Color.Random.ToColor32();
-	}
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
-
-		if ( AttachJoint.IsValid() )
-		{
-			AttachJoint.Remove();
-		}
-
-		if ( AttachRope != null )
-		{
-			AttachRope.Destroy( true );
-		}
+		RenderColor = Color.Random;
 	}
 
 	public override void OnKilled()
@@ -41,7 +23,7 @@ public partial class BalloonEntity : Prop
 	}
 
 	[Event.Physics.PostStep]
-	public void OnPostPhysicsStep()
+	protected void UpdateGravity()
 	{
 		if ( !this.IsValid() )
 			return;
@@ -49,6 +31,7 @@ public partial class BalloonEntity : Prop
 		var body = PhysicsBody;
 		if ( !body.IsValid() )
 			return;
+
 
 		body.GravityScale = GravityScale;
 	}
