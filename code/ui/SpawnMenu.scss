@@ -153,7 +153,7 @@
             height: 100%;
             background-position: center;
             background-size: cover;
-            background-color: #ccc;
+            background-color: rgba(black, 0.1);
             background-image: url( /entity/spawnicon.png );
 
             label {
@@ -162,11 +162,12 @@
                 bottom: -17px;
                 left: 0;
                 right: 0;
+                pointer-events: none;
             }
 
             &:hover {
                 color: #fff;
-                background-color: #fff;
+                background-color: rgba(black, 0.4);
             }
 
             &:active {
