@@ -1,14 +1,15 @@
-﻿using Sandbox;
-using Sandbox.Tools;
+﻿
+using Sandbox;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
-
+using System;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
 
 [Library]
 public partial class SpawnMenu : Panel
 {
 	public static SpawnMenu Instance;
-	readonly Panel toollist;
 
 	public SpawnMenu()
 	{
@@ -41,9 +42,25 @@ public partial class SpawnMenu : Panel
 			}
 			var body = right.Add.Panel( "body" );
 			{
-				toollist = body.Add.Panel( "toollist" );
+				var list = body.Add.Panel( "toollist" );
 				{
-					RebuildToolList();
+					foreach ( var entry in Library.GetAllAttributes<Sandbox.Tools.BaseTool>() )
+					{
+						if ( entry.Title == "BaseTool" )
+							continue;
+
+						var button = list.Add.Button( entry.Title );
+						button.SetClass( "active", entry.Name == ConsoleSystem.GetValue( "tool_current" ) );
+
+						button.AddEventListener( "onclick", () =>
+						{
+							ConsoleSystem.Run( "tool_current", entry.Name );
+							ConsoleSystem.Run( "inventory_current", "weapon_tool" );
+
+							foreach ( var child in list.Children )
+								child.SetClass( "active", child == button );
+						} );
+					}
 				}
 				body.Add.Panel( "inspector" );
 			}
@@ -51,56 +68,11 @@ public partial class SpawnMenu : Panel
 
 	}
 
-	void RebuildToolList()
-	{
-		toollist.DeleteChildren( true );
-
-		foreach ( var entry in Library.GetAllAttributes<BaseTool>() )
-		{
-			if ( entry.Title == "BaseTool" )
-				continue;
-
-			var button = toollist.Add.Button( entry.Title );
-			button.SetClass( "active", entry.Name == ConsoleSystem.GetValue( "tool_current" ) );
-
-			button.AddEventListener( "onclick", () =>
-			{
-				ConsoleSystem.Run( "tool_current", entry.Name );
-				ConsoleSystem.Run( "inventory_current", "weapon_tool" );
-
-				foreach ( var child in toollist.Children )
-					child.SetClass( "active", child == button );
-			} );
-		}
-	}
-
 	public override void Tick()
 	{
 		base.Tick();
 
 		Parent.SetClass( "spawnmenuopen", Input.Down( InputButton.Menu ) );
-
-		UpdateActiveTool();
 	}
 
-	void UpdateActiveTool()
-	{
-		var toolCurrent = ConsoleSystem.GetValue( "tool_current" );
-		var tool = string.IsNullOrWhiteSpace( toolCurrent ) ? null : Library.GetAttribute( toolCurrent );
-
-		foreach ( var child in toollist.Children )
-		{
-			if ( child is Button button )
-			{
-				child.SetClass( "active", tool != null && button.Text == tool.Title );
-			}
-		}
-	}
-
-	public override void OnHotloaded()
-	{
-		base.OnHotloaded();
-
-		RebuildToolList();
-	}
 }
